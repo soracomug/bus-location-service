@@ -1,6 +1,5 @@
 import lambdasrc.lambda_function
 import json
-import os
 
 target_area_geojson = """
 {
