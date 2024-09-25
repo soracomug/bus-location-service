@@ -38,4 +38,6 @@ def lambda_handler(event, context):
     print(json.dumps(event))
     point = event_map_to_point(event)
     area = json.loads(os.environ['area'])
-    return {'within_area': within_area(area,point)}
+    within = within_area(area,point)
+    print(f'within_area: {within}')
+    return {'within_area': within}
