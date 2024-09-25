@@ -1,5 +1,6 @@
 import lambdasrc.lambda_function
 import json
+import os
 
 target_area_geojson = """
 {
@@ -61,3 +62,12 @@ def test_event_map_to_point_latがないならNoneを返す():
 
 def test_event_map_to_point_lonがないならNoneを返す():
     assert lambdasrc.lambda_function.event_map_to_point({'lat':34.40094244423058}) == None
+
+def test_event_map_to_point_lat_lonがあるならLPointを返す():
+    p=lambdasrc.lambda_function.event_map_to_point({'lat':point_within.lat,'lon':point_within.lon})
+    assert p.lat == point_within.lat and p.lon == point_within.lon
+
+def test_lambda_handler():
+    event = {'lat':point_within.lat,'lon':point_within.lon}
+    os.environ['area'] = target_area_geojson
+    assert lambdasrc.lambda_function.lambda_handler(event,None) == {'within_area': True}
