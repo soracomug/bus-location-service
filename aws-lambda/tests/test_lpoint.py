@@ -1,5 +1,4 @@
 from lambdasrc.lpoint import LPoint
-
 import pytest
 
 def test_LPoint_latがfloatでないならValueErrorを返す():
