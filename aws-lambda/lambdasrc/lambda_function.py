@@ -2,15 +2,7 @@ from turfpy.measurement import boolean_point_in_polygon
 from geojson import Point, Polygon, Feature
 import json
 import os
-
-class LPoint():
-    def __init__(self, lon:float, lat:float):
-        if isinstance(lon, float) == False:
-            raise ValueError('lon must be float')
-        if isinstance(lat, float) == False:
-            raise ValueError('lon must be float')
-        self.lat = lat
-        self.lon = lon
+from lpoint import LPoint
 
 def within_area(area,lpoint:LPoint) -> bool:
     if lpoint is None:
