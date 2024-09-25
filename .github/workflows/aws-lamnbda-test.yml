@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - feature/lambda-for-iotcore-rule-engine
-  pull_request:
-    branches:
-      - main
 
 jobs:
   test:
