@@ -18,7 +18,7 @@ def within_area(area,lpoint:LPoint) -> bool:
     point = Feature(geometry=Point((lpoint.lon,lpoint.lat)))
     return boolean_point_in_polygon(point, polygon)
 
-def event_map_to_point(event:dict) -> Point:
+def event_map_to_point(event:dict) -> LPoint:
     if 'lat' not in event:
         return None
     if 'lon' not in event:
