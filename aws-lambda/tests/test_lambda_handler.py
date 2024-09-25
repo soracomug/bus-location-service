@@ -41,18 +41,15 @@ target_area_geojson = """
 }
 """
 
-target_area = json.loads(target_area_geojson)
 point_within = lambdasrc.lambda_function.LPoint(132.71309945650137,34.40094244423058)
 point_not_within = lambdasrc.lambda_function.LPoint(132.70396764071012,34.39631324093085)
 
-def test_within_area_areaがNoneならFalseを返す():
-    assert lambdasrc.lambda_function.within_area(None,point_within) == False
+def test_lambda_handler_pointがarea内ならtrueを返す():
+    event = {'lat':point_within.lat,'lon':point_within.lon}
+    os.environ['area'] = target_area_geojson
+    assert lambdasrc.lambda_function.lambda_handler(event,None) == {'within_area': True}
 
-def test_within_area_pointがNoneならFalseを返す():
-    assert lambdasrc.lambda_function.within_area(target_area,None) == False
-
-def test_within_area_pointがarea内ならTrueを返す():
-    assert lambdasrc.lambda_function.within_area(target_area,point_within) == True
-
-def test_within_area_pointがarea外ならFalseを返す():
-    assert lambdasrc.lambda_function.within_area(target_area,point_not_within) == False
+def test_lambda_handler_pointがarea外ならfalseを返す():
+    event = {'lat':point_not_within.lat,'lon':point_not_within.lon}
+    os.environ['area'] = target_area_geojson
+    assert lambdasrc.lambda_function.lambda_handler(event,None) == {'within_area': False}
