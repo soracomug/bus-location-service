@@ -29,12 +29,12 @@ jobs:
         run: |
           pytest -v
       - name: Zip the lambda source code
-        #if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         run: |
           cd lambdasrc
           zip -r ../lambdasrc.zip .
       - name: Upload artifact
-        #if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v4
         with:
           name: lambdasrc
@@ -46,7 +46,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    #if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/download-artifact@v4
