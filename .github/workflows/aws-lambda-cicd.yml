@@ -14,8 +14,9 @@ jobs:
       run:
         working-directory: ./aws-lambda
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up python
         uses: actions/setup-python@v5
         with:
           python-version: 3.12
@@ -49,13 +50,15 @@ jobs:
     if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
 
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
         with:
           name: lambdasrc
-      - uses: aws-actions/configure-aws-credentials@v4
+      - Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-region: ${{ vars.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }} #      
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}   
       - name: Deploy to AWS Lambda
         run: |
           aws s3 cp lambdasrc.zip s3://${{ vars.BUCKET_NAME }}/lambdasrc.zip
