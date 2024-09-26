@@ -35,7 +35,11 @@ jobs:
       run:
         working-directory: ./aws-lambda
     needs: test
+    permissions:
+      contents: read
+      id-token: write
     #if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
