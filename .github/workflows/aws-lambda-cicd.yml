@@ -42,9 +42,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./aws-lambda
     needs: test
     permissions:
       contents: read
