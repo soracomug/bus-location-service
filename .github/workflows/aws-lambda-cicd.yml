@@ -62,4 +62,5 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }} #      
       - name: Deploy to AWS Lambda
         run: |
-          aws lambda update-function-code --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} --zip-file fileb://lambdasrc.zip
+          aws s3 cp lambdasrc.zip s3://${{ vars.BUCKET_NAME }}/lambdasrc.zip
+          aws lambda update-function-code --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ vars.BUCKET_NAME }} --s3-key lambdasrc.zip
