@@ -51,7 +51,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install pytest
           cd lambdasrc
-          pip install -r requirements.txt
+          pip install -t . -r requirements.txt
       - name: Zip the lambda source code
         run: |
           cd lambdasrc
