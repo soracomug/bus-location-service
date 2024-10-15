@@ -1,0 +1,65 @@
+name: AWS Lambda CI/CD
+
+on:
+  push:
+    branches:
+      - feature/lambda-for-iotcore-rule-engine
+      - main
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./aws-lambda
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          cd lambdasrc
+          pip install -t . -r requirements.txt
+      - name: Run tests
+        run: |
+          pytest -v
+      - name: Zip the lambda source code
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        run: |
+          cd lambdasrc
+          zip -r ../lambdasrc.zip .
+      - name: Upload artifact
+        if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: lambdasrc
+          path: aws-lambda/lambdasrc.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+      id-token: write
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: lambdasrc
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}   
+      - name: Deploy to AWS Lambda
+        run: |
+          aws s3 cp lambdasrc.zip s3://${{ vars.BUCKET_NAME }}/lambdasrc.zip
+          aws lambda update-function-code --function-name ${{ vars.LAMBDA_FUNCTION_NAME }} --s3-bucket ${{ vars.BUCKET_NAME }} --s3-key lambdasrc.zip
