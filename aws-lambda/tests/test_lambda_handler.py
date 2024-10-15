@@ -1,6 +1,7 @@
 from lambdasrc.lambda_function import lambda_handler
 from lambdasrc.lpoint import LPoint
 import os
+from pytest_mock import MockFixture
 
 target_area_geojson = """
 {
@@ -44,12 +45,21 @@ target_area_geojson = """
 point_within = LPoint(132.71309945650137,34.40094244423058)
 point_not_within = LPoint(132.70396764071012,34.39631324093085)
 
-def test_lambda_handler_pointがarea内ならtrueを返す():
+def test_lambda_handler_pointがarea内ならtrueを返す(mocker: MockFixture):
     event = {'lat':point_within.lat,'lon':point_within.lon}
     os.environ['area'] = target_area_geojson
+
+    mocker.patch('lambdasrc.lambda_function.event_map_to_point',return_value=point_within)
+    mocker.patch('json.loads',return_value={})
+    mocker.patch('lambdasrc.lambda_function.within_area',return_value=True)
     assert lambda_handler(event,None) == {'within_area': True}
 
-def test_lambda_handler_pointがarea外ならfalseを返す():
+def test_lambda_handler_pointがarea外ならfalseを返す(mocker: MockFixture):
     event = {'lat':point_not_within.lat,'lon':point_not_within.lon}
     os.environ['area'] = target_area_geojson
+
+    mocker.patch('lambdasrc.lambda_function.event_map_to_point',return_value=point_not_within)
+    mocker.patch('json.loads',return_value={})
+    mocker.patch('lambdasrc.lambda_function.within_area',return_value=False)
+
     assert lambda_handler(event,None) == {'within_area': False}
