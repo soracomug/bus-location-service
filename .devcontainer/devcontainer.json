@@ -1,0 +1,21 @@
+{
+    "name": "Python Development",
+    "image": "mcr.microsoft.com/devcontainers/python:3.12-bookworm",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-python.python",
+          "ms-python.vscode-pylance",
+          "ms-toolsai.jupyter",
+          "GitHub.copilot",
+          "GitHub.copilot-chat"
+        ]
+      }
+    },
+    "containerEnv": {
+      "TZ": "Asia/Tokyo"
+    },
+    "runArgs": ["--init"],
+    "postCreateCommand": "cd aws-lambda && pip install -r requirements.txt && cd lambdasrc && pip install -r requirements.txt"
+}
+  

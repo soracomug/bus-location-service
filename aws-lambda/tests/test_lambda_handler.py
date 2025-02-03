@@ -3,63 +3,16 @@ from lambdasrc.lpoint import LPoint
 import os
 from pytest_mock import MockFixture
 
-target_area_geojson = """
-{
-  "type": "FeatureCollection",
-  "features": [
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            [
-              132.71764811654617,
-              34.392393437474325
-            ],
-            [
-              132.71764811654617,
-              34.40600913685532
-            ],
-            [
-              132.70797187336683,
-              34.40600913685532
-            ],
-            [
-              132.70797187336683,
-              34.392393437474325
-            ],
-            [
-              132.71764811654617,
-              34.392393437474325
-            ]
-          ]
-        ],
-        "type": "Polygon"
-      }
-    }
-  ]
-}
-"""
+import pytest
+from lambdasrc.lambda_function import lambda_handler
 
-point_within = LPoint(132.71309945650137,34.40094244423058)
-point_not_within = LPoint(132.70396764071012,34.39631324093085)
+@pytest.mark.parametrize("within_area_result, expected", [
+    (True, {'within_area': True}),
+    (False, {'within_area': False}),
+])
+def test_lambda_handler_within_areaの結果をJSONに整形して返す(within_area_result, expected, mocker):
+    mocker.patch('lambdasrc.lambda_function.event_map_to_point', return_value={})
+    mocker.patch('lambdasrc.lambda_function.load_area_json', return_value={})
+    mocker.patch('lambdasrc.lambda_function.within_area', return_value=within_area_result)
 
-def test_lambda_handler_pointがarea内ならtrueを返す(mocker: MockFixture):
-    event = {'lat':point_within.lat,'lon':point_within.lon}
-    os.environ['area'] = target_area_geojson
-
-    mocker.patch('lambdasrc.lambda_function.event_map_to_point',return_value=point_within)
-    mocker.patch('json.loads',return_value={})
-    mocker.patch('lambdasrc.lambda_function.within_area',return_value=True)
-    assert lambda_handler(event,None) == {'within_area': True}
-
-def test_lambda_handler_pointがarea外ならfalseを返す(mocker: MockFixture):
-    event = {'lat':point_not_within.lat,'lon':point_not_within.lon}
-    os.environ['area'] = target_area_geojson
-
-    mocker.patch('lambdasrc.lambda_function.event_map_to_point',return_value=point_not_within)
-    mocker.patch('json.loads',return_value={})
-    mocker.patch('lambdasrc.lambda_function.within_area',return_value=False)
-
-    assert lambda_handler(event,None) == {'within_area': False}
+    assert lambda_handler({}, None) == expected
