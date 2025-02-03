@@ -2,9 +2,8 @@ name: AWS Lambda CI/CD
 
 on:
   push:
-    branches:
-      - feature/lambda-for-iotcore-rule-engine
-      - main
+    paths: 
+      - 'aws-lambda/**'
   workflow_dispatch:
 
 jobs:
