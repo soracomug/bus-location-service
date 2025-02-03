@@ -4,6 +4,10 @@ on:
   push:
     paths: 
       - 'aws-lambda/**'
+  pull_request:
+    paths: 
+      - 'aws-lambda/**'
+  
   workflow_dispatch:
 
 jobs:
