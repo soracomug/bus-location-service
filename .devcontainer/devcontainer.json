@@ -15,6 +15,7 @@
     "containerEnv": {
       "TZ": "Asia/Tokyo"
     },
-    "runArgs": ["--init"]
+    "runArgs": ["--init"],
+    "postCreateCommand": "cd aws-lambda && pip install -r requirements.txt && cd lambdasrc && pip install -r requirements.txt"
 }
   
