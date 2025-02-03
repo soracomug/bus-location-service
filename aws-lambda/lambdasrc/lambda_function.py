@@ -34,10 +34,16 @@ def event_map_to_point(event:dict) -> LPoint:
 
     return LPoint(lon,lat)
 
+def load_area_json() -> dict:
+    area = os.environ.get('area')
+    if area is None:
+        return {}
+    return json.loads(area)
+
 def lambda_handler(event, context):
     print(json.dumps(event))
     point = event_map_to_point(event)
-    area = json.loads(os.environ['area'])
+    area = load_area_json()
     within = within_area(area,point)
     print(f'within_area: {within}')
     return {'within_area': within}
